@@ -4,11 +4,11 @@ import pandas as pd
 import dash
 
 external_scripts = ['https://cdn.tailwindcss.com']
-app = Dash(__name__, external_scripts=external_scripts, use_pages=True)
+dash_app = Dash(__name__, external_scripts=external_scripts, use_pages=True)
 
-server = app.server
+app = dash_app.server
 
-app.index_string = """
+dash_app.index_string = """
 <!DOCTYPE html>
 <html>
     <head>
@@ -52,7 +52,7 @@ navbar = html.Nav(children=[
 ], className='dark:bg-inherit py-5 px-5 flex')
 
 
-app.layout = html.Div(children=[
+dash_app.layout = html.Div(children=[
     navbar,
 
     # dcc.Graph(
@@ -66,4 +66,4 @@ app.layout = html.Div(children=[
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port='8000', dev_tools_hot_reload=False)
+    dash_app.run(debug=True, port='8000', dev_tools_hot_reload=False)
