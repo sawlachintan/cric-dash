@@ -1,3 +1,5 @@
 {
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/a1f51837-a21b-4a07-bb3b-5fa710814c85/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/t20ti",
+    "appService.deploySubpath": "."
 }

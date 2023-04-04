@@ -6,6 +6,8 @@ import dash
 external_scripts = ['https://cdn.tailwindcss.com']
 app = Dash(__name__, external_scripts=external_scripts, use_pages=True)
 
+server = app.server
+
 app.index_string = """
 <!DOCTYPE html>
 <html>
