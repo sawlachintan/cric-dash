@@ -133,6 +133,12 @@ def runs_graph(all_btns, years):
                              mode='lines+markers', name=team_trig, connectgaps=False, line=dict(color=color)))
     fig.update_layout(template=plotly_tempate, xaxis_title='Year',
                       yaxis_title='Avg. Runs per Season')
+    fig.update_layout(legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=0.01
+    ))
     return fig
 
 
@@ -171,7 +177,8 @@ def boundary_over_dots(data: pd.DataFrame,
     agg_data = agg_data.reset_index(drop=True)
 
     # remove the column with 6 in runs column
-    dots_bndrs = agg_data.loc[agg_data['runs_batter'] != 6,:].reset_index(drop=True)
+    dots_bndrs = agg_data.loc[agg_data['runs_batter']
+                              != 6, :].reset_index(drop=True)
 
     # long to wide dataframe
     final_df = dots_bndrs.pivot(
@@ -223,6 +230,12 @@ def bndry_dots(all_btns, years):
     fig.add_vline(x=15.5, col='#666666', line_dash="dash", line_color="grey")
     fig.update_layout(title='Ratio of boundaries over dots across the innings',
                       xaxis_title='Over', yaxis_title='Ratio of boundaries over dots', template=plotly_tempate)
+    fig.update_layout(legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=0.01
+    ))
 
     return fig
 
