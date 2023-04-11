@@ -171,8 +171,7 @@ def boundary_over_dots(data: pd.DataFrame,
     agg_data = agg_data.reset_index(drop=True)
 
     # remove the column with 6 in runs column
-    rows = [x for x in range(agg_data.shape[0]) if x % 3 != 2]
-    dots_bndrs = agg_data.iloc[rows,]  # type: ignore
+    dots_bndrs = agg_data.loc[agg_data['runs_batter'] != 6,:].reset_index(drop=True)
 
     # long to wide dataframe
     final_df = dots_bndrs.pivot(
