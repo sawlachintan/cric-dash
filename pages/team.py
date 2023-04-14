@@ -51,8 +51,18 @@ layout = html.Div(children=[html.Div(children=[
 
 ], className='dark:text-white flex flex-col gap-5 md:grid md:grid-cols-5 md:gap-4'),
     html.Div(children=[
-
-
+        html.Div('Phase wise Run Rate',
+                 className='font-semibold text-3xl dark:text-white'),
+        html.Div(children=[
+            html.Div(
+                children=[html.H3('Powerplay', className='font-semibold text-3xl'),
+                          html.P('pp', id='pp-val')]),
+            html.Div(children=[html.H3('Middle Overs',
+                     className='font-semibold text-3xl'), html.P('mo', id='mo-val')]),
+            html.Div(
+                children=[html.H3('Death', className='font-semibold text-3xl'),
+                          html.P('de', id='de-val')])
+        ], className='dark:text-white flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4'),
         dcc.Graph(id='runs-line', config={'displaylogo': False}),
         dcc.Graph(id='bndry-vs-dots', config={'displaylogo': False}),
         dcc.Graph(id='runs-per-wick', config={'displaylogo': False})
@@ -289,3 +299,63 @@ def rpw_plot(all_btns, years):
     fig.update_layout(title='Runs per wicket',
                       xaxis_title='Teams', yaxis_title='Runs per Wicket', template=plotly_tempate)
     return fig
+
+
+def get_phase_scores(team: Optional[str] = None) -> List[float]:
+    if team:
+        all_data = merge_df[(merge_df['batting_team'] == team)]\
+            .copy(deep=True)\
+            .reset_index(drop=True)
+    else:
+        all_data = merge_df.copy(deep=True).reset_index(drop=True)
+
+    powerplay = all_data[(all_data.over >= 0) & (all_data.over <= 5)]\
+        .copy(deep=True)\
+        .reset_index(drop=True)
+    mid_ov = all_data[(all_data.over >= 6) & (all_data.over <= 15)]\
+        .copy(deep=True)\
+        .reset_index(drop=True)
+    death = all_data[(all_data.over >= 16) & (all_data.over <= 20)]\
+        .copy(deep=True)\
+        .reset_index(drop=True)
+
+    pp_bf = powerplay[(powerplay.extras_type != 'noballs') &
+                      (powerplay.extras_type != 'wides')].shape[0]
+    pp_rs = powerplay['runs_total'].sum()
+    pp_rr = round(pp_rs / pp_bf * 6, 2)
+    del pp_bf, pp_rs, powerplay
+    mo_bf = mid_ov[(mid_ov.extras_type != 'noballs') &
+                   (mid_ov.extras_type != 'wides')].shape[0]
+    mo_rs = mid_ov['runs_total'].sum()
+    mo_rr = round(mo_rs / mo_bf * 6, 2)
+    del mo_bf, mo_rs, mid_ov
+    de_bf = death[(death.extras_type != 'noballs') &
+                  (death.extras_type != 'wides')].shape[0]
+    de_rs = death['runs_total'].sum()
+    de_rr = round(de_rs / de_bf * 6, 2)
+    del de_bf, de_rs, death
+    return [pp_rr, mo_rr, de_rr]
+
+
+@callback(Output('pp-val', 'children'), Output('mo-val', 'children'), Output('de-val', 'children'), inputs={'all_btns': {
+    team: Input(f'{team}-btn', 'n_clicks') for team in ABB
+}, 'years': Input('my-range-slider', 'value')})
+def phase_vals(all_btns, years):
+    def find_key(all_btns: dict) -> str:
+        for key in all_btns:
+            if all_btns[key].triggered:
+                return key
+        return 'csk'
+
+    c = dash.ctx.args_grouping.all_btns  # type: ignore
+
+    team_trig = ABB[find_key(c)][0]
+
+    years = sorted(years)
+
+    all_time = get_phase_scores()
+
+    team = get_phase_scores(team_trig)
+
+    # print(team, all_time)
+    return team
