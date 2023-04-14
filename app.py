@@ -40,7 +40,7 @@ fig = px.bar(df, x="Fruit", y="Amount", color="City",
 
 navbar = html.Nav(children=[
     html.Div(children=[
-        html.A(children=[html.H1(children='TwenVIZ')], href='/',
+        html.A(children=[html.H1(children='T20TI')], href='/',
                className='dark:text-white text-3xl font-extrabold')
     ], className='flex-1'),
     html.Div(children=[
